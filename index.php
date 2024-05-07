@@ -22,9 +22,9 @@
     $sql .= " AND active = 1 GROUP BY country ORDER BY total_amount DESC";
 
     $result = $conn->query($sql);
+    $histories = [];
     
     if ($result->num_rows > 0) {
-        $histories = [];
 
         while($row = $result->fetch_assoc()) {
            $histories[] = $row;
@@ -72,12 +72,12 @@
                 </div>
             </div>
         </form>
-        <?php if(isset($_GET['date_from']) || isset($_GET['date_to'])) {?>
+        <?php if(isset($_GET['date_from']) || isset($_GET['date_to'])) :?>
         <div class="row">
             <a href="/index.php" class="btn btn-info">Clear filters</a>
         </div>
 
-        <?php } ?>
+        <?php endif; ?>
 
         <div>
             <table class="table table-striped table-hover text-center">
@@ -88,12 +88,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($histories as $history) : ?>
+                    <?php if(count($histories) < 1): ?>
                         <tr>
-                            <td><?= $history['country'] ?></td>
-                            <td><?= number_format($history['total_amount'], 2) ?></td>
+                            <td colspan="2" class="text-center">No data found...</td>
                         </tr>
-                    <?php endforeach; ?>
+                    <?php else: ?>
+                        <?php foreach($histories as $history) : ?>
+                            <tr>
+                                <td><?= $history['country'] ?></td>
+                                <td><?= number_format($history['total_amount'], 2) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                   
                 </tbody>
             </table>
         </div>
